@@ -6,8 +6,18 @@ function logger(req, res, next) {
   next()
 }
 
-function validateUserId(req, res, next) {
-  // DO YOUR MAGIC
+async function validateUserId(req, res, next) {
+  const { id } = req.params
+  User.getById(id)
+  .then(match => {
+    if(match) {
+      req.user = match
+      next()
+    } else {
+      next({ status: 404, message: "user not found"})
+    }
+  })
+  .catch(next)
 }
 
 function validateUser(req, res, next) {
@@ -19,4 +29,4 @@ function validatePost(req, res, next) {
 }
 
 // do not forget to expose these functions to other modules
-module.exports = {logger}
+module.exports = {logger, validateUserId}
